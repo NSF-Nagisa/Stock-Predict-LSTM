@@ -74,7 +74,7 @@ def load_data(data_path, tra_date, val_date, tes_date, seq=2,
         if date_ind < seq:
             continue
         for tic_ind in range(len(fnames)):
-            if abs(data_EOD[tic_ind][date_ind][-2]) > 1e-8:
+            if abs(data_EOD[tic_ind][date_ind][-1]) > 1e-8:
                 if data_EOD[tic_ind][date_ind - seq: date_ind, :].min() > -123320:
                     tes_num += 1
     print(tes_num, ' testing instances')
@@ -136,11 +136,14 @@ def load_data(data_path, tra_date, val_date, tes_date, seq=2,
 
 if __name__ == '__main__':
     # TEST
-    _, _, tra_gt, _, _, val_gt, _, _, tes_gt = load_data(
-        './data/DJI/pred',
-        '2018-01-02', '2021-03-01', '2021-08-02'
+    tra_pv, tra_wd, tra_gt, _, _, val_gt, _, _, tes_gt = load_data(
+        './data/stocknet-dataset/pred',
+        '2014-01-02', '2015-08-03', '2015-10-01'
     )
-    print(np.sum(tra_gt))
-    print(np.sum(val_gt))
-    print(np.sum(tes_gt))
-    print(np.sum(tes_gt) / 3720)
+    print(tra_pv[50])
+    print(tra_wd[50])
+    print(tra_gt[50])
+    # print(np.sum(tra_gt))
+    # print(np.sum(val_gt))
+    # print(np.sum(tes_gt))
+    # print(np.sum(tes_gt) / 3720)

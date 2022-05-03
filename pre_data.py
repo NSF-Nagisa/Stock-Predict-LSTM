@@ -2,9 +2,9 @@ import pandas as pd
 import numpy as np
 import os
 
-data_path = './data/SSE50/raw/'
-output_path = './data/SSE50/pred/'
-start_date = '2018-01-01'
+data_path = './data/DJI/raw/'
+output_path = './data/DJI/pred/'
+start_date = '2017-07-03'
 end_date = '2022-01-01'
 
 class Features:
@@ -40,6 +40,10 @@ class Features:
                 high = df.loc[date]['High']
                 low = df.loc[date]['Low']
                 closes = df[df.index.get_loc(date)-29:df.index.get_loc(date)+1]['Close']
+                if closes.shape[0] == 0:
+                    data = [-123321]*12
+                    pred.loc[len(pred)] = data
+                    continue
                 adj_closes = df[df.index.get_loc(date)-29:df.index.get_loc(date)+1]['Adj Close']
                 data.append(self.c_feature(open, closes[-1]))
                 data.append(self.c_feature(high, closes[-1]))
@@ -52,7 +56,8 @@ class Features:
                 pred.loc[len(pred)] = data
 
             else:
-                return False
+                data = [-123321]*12
+                pred.loc[len(pred)] = data
 
         return pred
 
@@ -68,6 +73,7 @@ if __name__ == '__main__':
         df = pd.read_csv(os.path.join(data_path, fname))
         df.set_index('Date', inplace=True)
         features = Features(df, trade_dates)
+        # print(fname)
         output = features.gen()
         if type(output) is not bool:
             output.to_csv(os.path.join(output_path, fname), index=False, header=False)
