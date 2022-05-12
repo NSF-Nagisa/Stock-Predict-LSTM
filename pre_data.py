@@ -2,8 +2,8 @@ import pandas as pd
 import numpy as np
 import os
 
-data_path = './data/DJI/raw/'
-output_path = './data/DJI/pred/'
+data_path = './data/kdd17/raw/'
+output_path = './data/kdd17/pred/'
 start_date = '2017-07-03'
 end_date = '2022-01-01'
 
