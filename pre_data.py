@@ -2,10 +2,10 @@ import pandas as pd
 import numpy as np
 import os
 
-data_path = './data/kdd17/raw/'
-output_path = './data/kdd17/pred/'
+data_path = './data/SSE50/raw/'
+output_path = './data/SSE50/pred/'
 start_date = '2017-07-03'
-end_date = '2022-01-01'
+end_date = '2021-10-01'
 
 class Features:
     def __init__(self, df, trading_dates):

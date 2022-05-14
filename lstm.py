@@ -5,6 +5,7 @@ import random
 from sklearn.utils import shuffle
 import tensorflow as tf
 from time import time
+import matplotlib.pyplot as plt
 # try:
 #     from tensorflow.python.ops.nn_ops import leaky_relu
 # except ImportError:
@@ -132,7 +133,7 @@ class AWLSTM:
             tf.compat.v1.reset_default_graph()
             tf.compat.v1.disable_eager_execution()
             if self.fix_init:
-                tf.random.set_seed(123456)
+                tf.random.set_seed(1550)
 
             self.gt_var = tf.compat.v1.placeholder(tf.float32, [None, 1])
             self.pv_var = tf.compat.v1.placeholder(
@@ -474,7 +475,10 @@ class AWLSTM:
         sess.close()
         tf.compat.v1.reset_default_graph()
 
-    def train(self, tune_para=False):
+    def train(self, tune_para=True):
+
+        train_loss = []
+        validate_loss = []
         self.construct_graph()
 
         sess = tf.compat.v1.Session()
@@ -524,6 +528,7 @@ class AWLSTM:
                 tra_adv += cur_al
             print('----->>>>> Training:', tra_obj / bat_count,
                   tra_loss / bat_count, l2 / bat_count, tra_adv / bat_count)
+            train_loss.append(tra_loss / bat_count)
 
             if not tune_para:
                 tra_loss = 0.0
@@ -562,6 +567,8 @@ class AWLSTM:
             cur_valid_perf = evaluate(val_pre, self.val_gt, self.hinge)
             print('\tVal per:', cur_valid_perf, '\tVal loss:', val_loss)
 
+            validate_loss.append(val_loss)
+
             # test on testing set
             feed_dict = {
                 self.pv_var: self.tes_pv,
@@ -588,6 +595,15 @@ class AWLSTM:
             print('epoch:', i, ('time: %.4f ' % (t4 - t1)))
         print('\nBest Valid performance:', best_valid_perf)
         print('\tBest Test performance:', best_test_perf)
+        
+        # plt.figure(figsize=(8,8), dpi=200)
+        # plt.plot(train_loss)
+        # plt.plot(validate_loss)
+        # plt.ylabel('loss')
+        # plt.xlabel('epoch')
+        # plt.legend(['train', 'validation'], loc='upper right')
+        # plt.show()
+
         sess.close()
         tf.compat.v1.reset_default_graph()
         if tune_para:
@@ -670,15 +686,19 @@ if __name__ == '__main__':
         tes_date = '2021-08-02'
     elif 'SSE50' in args.path:
         tra_date = '2018-01-02'
-        val_date = '2021-03-01'
-        tes_date = '2021-08-02'
-    elif 'stocknet' in args.path:
+        val_date = '2020-10-09'
+        tes_date = '2021-03-01'
+    elif 'acl18' in args.path:
         tra_date = '2014-01-02'
         val_date = '2015-08-03'
-        tes_date = '2015-10-01'
+        tes_date = '2015-10-01' 
     else:
         print('unexpected path: ' + args.path)
         exit(0)
+
+    # tra_date = '2018-01-02'
+    # val_date = '2021-03-01'
+    # tes_date = '2021-08-02'
 
     pure_LSTM = AWLSTM(
         data_path=args.path,
