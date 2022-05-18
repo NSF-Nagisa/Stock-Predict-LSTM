@@ -23,9 +23,9 @@ class Features:
 
     def label(self, pt, pt1):
         move = pt1 / pt - 1
-        if move >= 0.0055:
+        if move >= 0.01:
             return 1
-        elif move <= -0.005:
+        elif move <= -0.01:
             return -1
         else:
             return 0
